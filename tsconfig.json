@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "jsx": "react",
+    "jsxFactory": "createElement",
+    "moduleDetection": "auto",
+    "target": "ES6",
+    "module": "es2015",
+    "rootDirs": ["./src", "./example"],
+    "outDir": "./public",
+    "preserveValueImports": true,
+    "strict": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+  }
+}

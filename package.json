@@ -1,0 +1,19 @@
+{
+  "name": "practicaldevlib",
+  "version": "1.0.0",
+  "description": "Frontend project lib for VK education",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/t1d333/FrontendLib.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/t1d333/FrontendLib/issues"
+  },
+  "homepage": "https://github.com/t1d333/FrontendLib#readme"
+}
