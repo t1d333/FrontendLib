@@ -1,5 +1,20 @@
-import { renderElement } from "./render.js";
-import { VAttributes, VComponent, VElement, VNode, VText } from "./vdom.js";
+import { renderElement } from "./render";
+import { VAttributes, VComponent, VElement, VNode, VText } from "./vdom";
+
+const removeDunderFields = (obj: any) => {
+  return Object.keys(obj)
+    .filter((key) => !key.startsWith("__"))
+    .reduce((acc: object, key: string) => {
+      return { ...acc, key: obj[key] };
+    }, {});
+};
+
+const compareObjects = (obj1: any, obj2: any): boolean => {
+  return (
+    JSON.stringify(removeDunderFields(obj1)) ===
+    JSON.stringify(removeDunderFields(obj2))
+  );
+};
 
 type AttributesUpdater = {
   remove: string[];
@@ -91,7 +106,7 @@ export const GetDiff = (oldNode: VNode, newNode: VNode): VNodeUpdater => {
 
     if (oldNode.component === newNode.component && oldNode.instance) {
       newNode.instance = oldNode.instance;
-      if (JSON.stringify(oldNode.props) === JSON.stringify(newNode.props)) {
+      if (compareObjects(oldNode.props, newNode.props)) {
         return createSkip();
       }
       return newNode.instance.setProps(newNode.props);

@@ -5,12 +5,13 @@
     "moduleDetection": "auto",
     "target": "ES6",
     "module": "es2015",
-    "rootDirs": ["./src", "./example"],
-    "outDir": "./public",
+    "rootDirs": ["./src"],
+    "outDir": "./dist",
     "preserveValueImports": true,
     "strict": true,
     "allowSyntheticDefaultImports": true,
+    "experimentalDecorators": true,
     "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
+    "forceConsistentCasingInFileNames": true
   }
 }

@@ -1,4 +1,4 @@
-import { VComponent, VElement, VNode, VText } from "./vdom.js";
+import { VComponent, VElement, VNode, VText } from "./vdom";
 
 export const renderElement = (elem: VNode): HTMLElement | Text => {
   if (elem.type == "text") {

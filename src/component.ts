@@ -1,5 +1,5 @@
-import { ApplyDiff, GetDiff, VNodeUpdater } from "./diff.js";
-import { VNode } from "./vdom.js";
+import { ApplyDiff, GetDiff, VNodeUpdater } from "./diff";
+import { VNode } from "./vdom";
 
 export abstract class Component<P, S> {
   protected props: P;

@@ -1,6 +1,6 @@
-import { Component } from "../src/component.js";
-import { renderElement } from "../src/render.js";
-import { VAttributes, createElement } from "../src/vdom.js";
+import { Component } from "../src/component";
+import { renderElement } from "../src/render";
+import { VAttributes, createElement } from "../src/vdom";
 declare global {
   namespace JSX {
     interface IntrinsicElements {
