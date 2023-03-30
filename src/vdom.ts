@@ -1,21 +1,22 @@
-import { Component } from "./component.js";
+import { Component } from "./component";
 
-export type VAttributes = {
+export interface VAttributes {
   [_: string]: string | number | boolean | Function;
 };
+
 
 export interface VElement {
   type: "element";
   tagname: string;
   props?: VAttributes;
   children?: VNode[];
-  key: string | number;
+  key: string | number | undefined;
 }
 
 export interface VText {
   type: "text";
   value: string;
-  key: string | number;
+  key: string | number | undefined;
 }
 
 export interface VComponent {
@@ -23,7 +24,7 @@ export interface VComponent {
   instance?: Component<any, any>;
   component: { new (): Component<any, any> };
   props: object;
-  key: string | number;
+  key: string | number | undefined;
 }
 
 export type VNode = VElement | VText | VComponent;
@@ -40,13 +41,12 @@ const createComponent = (
   component: { new (): Component<any, any> },
   props: VAttributes & { key?: string | number }
 ): VComponent => {
-  let key = props.key || "";
-  delete props.key;
+  const { key, ...restProps } = props;
   return {
     type: "component",
     key: key,
     component: component,
-    props: props,
+    props: restProps,
   };
 };
 
@@ -56,30 +56,25 @@ export const createElement = (
   ...children: (VNode | string)[]
 ): VNode => {
   const newChilds: VNode[] = [];
-  if (typeof tag == "function") {
-    return createComponent(tag as { new (): Component<any, any> }, props || {});
+  if (typeof tag == "string") {
+    children.forEach((child) => {
+      if (typeof child === "string") {
+        newChilds.push(createText(child));
+      } else {
+        newChilds.push(child);
+      }
+    });
+
+    const { key, ...restProps } = props;
+
+    return {
+      type: "element",
+      tagname: tag as string,
+      props: restProps,
+      children: newChilds,
+      key: key,
+    };
   }
 
-  children.forEach((child) => {
-    if (typeof child === "string") {
-      newChilds.push(createText(child));
-    } else {
-      newChilds.push(child);
-    }
-  });
-
-  let key: string | number = "";
-
-  if (props) {
-    key = props.key || "";
-    delete props.key;
-  }
-
-  return {
-    type: "element",
-    tagname: tag as string,
-    props: props,
-    children: newChilds,
-    key: key,
-  };
+  return createComponent(tag, props || {});
 };

@@ -23,7 +23,7 @@ type AttributesUpdater = {
 
 interface UpdateOperation {
   type: "update";
-  attUpdater: AttributesUpdater;
+  attrUpdater: AttributesUpdater;
   childUpdater: ChildUpdater[];
 }
 
@@ -73,12 +73,12 @@ const createInsert = (node: VNode): InsertOperation => {
 };
 
 const createUpdate = (
-  attUpdater: AttributesUpdater,
+  attrUpdater: AttributesUpdater,
   childUpdater: ChildUpdater[]
 ): UpdateOperation => {
   return {
     type: "update",
-    attUpdater: attUpdater,
+    attrUpdater: attrUpdater,
     childUpdater: childUpdater,
   };
 };
@@ -134,7 +134,7 @@ export const GetDiff = (oldNode: VNode, newNode: VNode): VNodeUpdater => {
     return createReplace(newNode);
   }
 
-  const attUpdater: AttributesUpdater = {
+  const attrUpdater: AttributesUpdater = {
     remove: Object.keys(oldElem.props || {}).filter(
       (att) => Object.keys(newElem.props || {}).indexOf(att) == -1
     ),
@@ -148,7 +148,7 @@ export const GetDiff = (oldNode: VNode, newNode: VNode): VNodeUpdater => {
     oldElem.children || [],
     newElem.children || []
   );
-  return createUpdate(attUpdater, childUpdater);
+  return createUpdate(attrUpdater, childUpdater);
 };
 
 const deleteBeforKey = (
@@ -185,10 +185,10 @@ export const GetChildsDiff = (
   newChilds: VNode[]
 ): ChildUpdater[] => {
   const remainingOldChilds: [string | number, VNode][] = oldChilds.map(
-    (node) => [node.key, node]
+    (node) => [node.key || "", node]
   );
   const remainingNewChilds: [string | number, VNode][] = newChilds.map(
-    (node) => [node.key, node]
+    (node) => [node.key || "", node]
   );
 
   let [updateKey] = remainingOldChilds.find(
@@ -228,12 +228,12 @@ export const ApplyDiff = (
         throw new Error("invalid update for Text node");
       }
 
-      diff.attUpdater.remove.forEach((att) => {
+      diff.attrUpdater.remove.forEach((att) => {
         (node as HTMLElement).removeAttribute(att);
       });
 
-      Object.keys(diff.attUpdater.set).forEach((att) => {
-        (node as any)[att] = diff.attUpdater.set[att];
+      Object.keys(diff.attrUpdater.set).forEach((att) => {
+        (node as any)[att] = diff.attrUpdater.set[att];
       });
 
       ApplyChildsDiff(node as HTMLElement, diff.childUpdater);

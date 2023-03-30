@@ -1,10 +1,10 @@
 {
   "name": "@t1d333/pickpinlib",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "",
   "source": "src/index.ts",
   "main": "dist/main.js",
-  "module": "dist/module.js",
+  "type": "module",
   "types": "dist/types.d.ts",
   "directories": {
     "src": "src"
@@ -14,12 +14,10 @@
     "build": "parcel build",
     "clean": "rm -rf ./dist",
     "example": "parcel ./example/index.html --open --no-cache"
-  }, "repository": {
+  },
+  "repository": {
     "type": "git",
     "url": "git+https://github.com/t1d333/FrontendLib.git"
-  },
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com/"
   },
   "keywords": [],
   "author": "",
