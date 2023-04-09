@@ -23,9 +23,7 @@ export abstract class Component<P, S> {
     }
 
     this.currentRootNode = newRootNode;
-    setTimeout(() => {
-      this.componentDidUpdate();
-    });
+    this.componentDidUpdate();
     return diff;
   }
 

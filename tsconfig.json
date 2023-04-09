@@ -3,7 +3,7 @@
     "jsx": "react",
     "jsxFactory": "createElement",
     "moduleDetection": "auto",
-    "target": "ES6",
+    "target": "es2015",
     "module": "es2015",
     "rootDirs": ["./src"],
     "outDir": "./dist",

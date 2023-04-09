@@ -1,9 +1,8 @@
 import { Component } from "./component";
 
 export interface VAttributes {
-  [_: string]: string | number | boolean | Function;
-};
-
+  [_: string]: string | number | boolean | Function | (string | VNode)[];
+}
 
 export interface VElement {
   type: "element";
@@ -75,6 +74,5 @@ export const createElement = (
       key: key,
     };
   }
-
-  return createComponent(tag, props || {});
+  return createComponent(tag, { ...(props || {}), children: children });
 };
