@@ -54,7 +54,6 @@ export abstract class Component<P, S> {
 
   public notifyMounted(elem: HTMLElement | Text) {
     this.mountedElem = elem;
-    // почему-то не работает с setTimeout, после выполнения хука свойства объекта не обновляются
     this.componentDidMount();
   }
 

@@ -1,12 +1,17 @@
+import { Component } from "./component";
 import { renderElement } from "./render";
 import { VAttributes, VComponent, VElement, VNode, VText } from "./vdom";
 
 const removeDunderFields = (obj: any) => {
-  return Object.keys(obj)
-    .filter((key) => !key.startsWith("__"))
-    .reduce((acc: object, key: string) => {
-      return { ...acc, key: obj[key] };
-    }, {});
+  const newObj: any = {};
+  Object.keys(obj)
+    .filter((key) => {
+      return !key.startsWith("__");
+    })
+    .forEach((key) => {
+      newObj[key] = obj[key];
+    });
+  return newObj;
 };
 
 const compareObjects = (obj1: any, obj2: any): boolean => {
@@ -123,7 +128,7 @@ export const GetDiff = (oldNode: VNode, newNode: VNode): VNodeUpdater => {
     return {
       type: "replace",
       newNode: newNode.instance.initProps(newNode.props),
-      callback: (e) => newNode.instance.notifyMounted(e),
+      callback: (e) => (newNode as VComponent).instance!.notifyMounted(e),
     };
   }
 
@@ -151,63 +156,31 @@ export const GetDiff = (oldNode: VNode, newNode: VNode): VNodeUpdater => {
   return createUpdate(attrUpdater, childUpdater);
 };
 
-const deleteBeforKey = (
-  operations: ChildUpdater[],
-  elems: [string | number, VNode][],
-  key: string | number | undefined
-) => {
-  while (elems[0] && elems[0][0] !== key) {
-    if (elems[0][1].type === "component") {
-      elems[0][1].instance!.unmount();
-      elems[0][1].instance = undefined;
-    }
-    operations.push(createDelete());
-    elems.shift();
-  }
-};
-
-const insertAfterKey = (
-  operations: ChildUpdater[],
-  elems: [string | number, VNode][],
-  key: string | number | undefined
-) => {
-  while (elems[0] && elems[0][0] !== key) {
-    operations.push(createInsert(elems.shift()![1]));
-  }
-};
-
-/*
- Возможна оптимизация, каждая пара remove и insert выполняется с помощью одной replace. 
-*/
-
 export const GetChildsDiff = (
   oldChilds: VNode[],
   newChilds: VNode[]
 ): ChildUpdater[] => {
-  const remainingOldChilds: [string | number, VNode][] = oldChilds.map(
-    (node) => [node.key || "", node]
-  );
-  const remainingNewChilds: [string | number, VNode][] = newChilds.map(
-    (node) => [node.key || "", node]
-  );
-
-  let [updateKey] = remainingOldChilds.find(
-    (k) => remainingNewChilds.map((p) => p[0]).indexOf(k[0]) != -1
-  ) || [null];
   const operations: ChildUpdater[] = [];
-  while (updateKey || updateKey == "") {
-    deleteBeforKey(operations, remainingOldChilds, updateKey);
-    insertAfterKey(operations, remainingNewChilds, updateKey);
-    operations.push(
-      GetDiff(remainingOldChilds.shift()![1], remainingNewChilds.shift()![1])
-    );
-    [updateKey] = remainingOldChilds.find(
-      (k) => remainingNewChilds.map((p) => p[0]).indexOf(k[0]) != -1
-    ) || [null];
+  const oldChildsCount = oldChilds.length;
+  const newChildsCount = newChilds.length;
+  let i = 0;
+
+  for (; i < oldChildsCount && i < newChildsCount; ++i) {
+    operations.push(GetDiff(oldChilds[i], newChilds[i]));
   }
 
-  deleteBeforKey(operations, remainingOldChilds, undefined);
-  insertAfterKey(operations, remainingNewChilds, undefined);
+  for (let j = i; j < oldChildsCount; ++j) {
+    if (oldChilds[i].type === "component") {
+      (oldChilds[i] as VComponent).instance!.unmount();
+      (oldChilds[i] as VComponent).instance = undefined;
+    }
+    operations.push(createDelete());
+  }
+
+  for (let j = i; j < newChildsCount; ++j) {
+    operations.push(createInsert(newChilds[j]));
+  }
+
   return operations;
 };
 
