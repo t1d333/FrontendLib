@@ -1,6 +1,8 @@
-import { Component } from "./component";
 import { renderElement } from "./render";
 import { VAttributes, VComponent, VElement, VNode, VText } from "./vdom";
+const isObj = (obj: any) => {
+  return typeof obj === "object" && !Array.isArray(obj) && obj !== null;
+};
 
 const removeDunderFields = (obj: any) => {
   const newObj: any = {};
@@ -9,15 +11,31 @@ const removeDunderFields = (obj: any) => {
       return !key.startsWith("__");
     })
     .forEach((key) => {
-      newObj[key] = obj[key];
+      if (
+        typeof obj[key] === "object" &&
+        !Array.isArray(obj[key]) &&
+        obj[key] !== null
+      ) {
+        newObj[key] = removeDunderFields(obj[key]);
+      } else if (Array.isArray(obj[key])) {
+        newObj[key] = [...obj[key]].map((prop) => {
+          if (isObj(prop)) {
+            return removeDunderFields(prop);
+          } else {
+            return prop;
+          }
+        });
+      } else {
+        newObj[key] = obj[key];
+      }
     });
   return newObj;
 };
 
-const compareObjects = (obj1: any, obj2: any): boolean => {
+const compareObjects = (o1: any, o2: any): boolean => {
   return (
-    JSON.stringify(removeDunderFields(obj1)) ===
-    JSON.stringify(removeDunderFields(obj2))
+    JSON.stringify(removeDunderFields(o1)) ===
+    JSON.stringify(removeDunderFields(o2))
   );
 };
 
