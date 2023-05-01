@@ -1,6 +1,6 @@
 {
   "name": "@t1d333/pickpinlib",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "description": "",
   "source": "src/index.ts",
   "main": "dist/main.js",
