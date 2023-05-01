@@ -4,30 +4,24 @@ const isObj = (obj: any) => {
   return typeof obj === "object" && !Array.isArray(obj) && obj !== null;
 };
 
-const removeDunderFields = (obj: any) => {
+const removeDunderFields = (obj: any | any[]): any | any[] => {
+  if (Array.isArray(obj)) {
+    return [...obj].map((o) => {
+      return removeDunderFields(o);
+    });
+  }
+
+  if (!isObj(obj)) {
+    return obj;
+  }
+
   const newObj: any = {};
   Object.keys(obj)
     .filter((key) => {
       return !key.startsWith("__");
     })
     .forEach((key) => {
-      if (
-        typeof obj[key] === "object" &&
-        !Array.isArray(obj[key]) &&
-        obj[key] !== null
-      ) {
-        newObj[key] = removeDunderFields(obj[key]);
-      } else if (Array.isArray(obj[key])) {
-        newObj[key] = [...obj[key]].map((prop) => {
-          if (isObj(prop)) {
-            return removeDunderFields(prop);
-          } else {
-            return prop;
-          }
-        });
-      } else {
-        newObj[key] = obj[key];
-      }
+      newObj[key] = removeDunderFields(obj[key]);
     });
   return newObj;
 };
@@ -188,9 +182,9 @@ export const GetChildsDiff = (
   }
 
   for (let j = i; j < oldChildsCount; ++j) {
-    if (oldChilds[i].type === "component") {
-      (oldChilds[i] as VComponent).instance!.unmount();
-      (oldChilds[i] as VComponent).instance = undefined;
+    if (oldChilds[j].type === "component") {
+      (oldChilds[j] as VComponent).instance!.unmount();
+      (oldChilds[j] as VComponent).instance = undefined;
     }
     operations.push(createDelete());
   }
