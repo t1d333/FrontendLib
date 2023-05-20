@@ -64,7 +64,7 @@ export const createElement = (
       }
     });
 
-    const { key, ...restProps } = props;
+    const { key, ...restProps } = props ?? {};
 
     return {
       type: "element",
